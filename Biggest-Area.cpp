@@ -2,8 +2,8 @@
 using namespace std;
 
 struct Building {
-    int height;
     int width;
+    int height;
 };
 
 class SegmentTree {
