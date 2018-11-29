@@ -2,13 +2,14 @@
 using namespace std;
 
 struct Building {
-    int width;
     int height;
+    int width;
 };
 
 class SegmentTree {
 private:
-    int * ST , n , TreeSize , TreeHeight;
+    int * ST , n , TreeSize , TreeHeight , CurrentBiggestArea = 0;
+    pair <int , int> Range;
     Building * data;
     
     void Build(int v, int start, int end) {
@@ -53,8 +54,22 @@ private:
         int right = Partation(IndexMinHeight+1, r);
         int AreaWithCurrentMinHeight = data[IndexMinHeight].height * GetWidth(l , r);
         
-        return max(max(left , right) , AreaWithCurrentMinHeight);
+        int BestArea = max(max(left , right) , AreaWithCurrentMinHeight);
+
+        if (BestArea > CurrentBiggestArea) {
+            CurrentBiggestArea = BestArea;
+            if (left == BestArea) {
+                Range = {l , IndexMinHeight-1};
+            } else if (right == BestArea) {
+                Range = {IndexMinHeight+1 , r};
+            } else {
+                Range = {l , r};
+            }
+        }
+        
+        return BestArea;
     }
+    
     
 public:
     SegmentTree(Building _data[] , int size) {
@@ -70,7 +85,14 @@ public:
     int getBiggestArea() {
         return Partation(0 , n-1);
     }
-
+    
+    void getBuildings () {
+        cout << "Buildings Number : ";
+        for (int i = Range.first; i <= Range.second; i++) {
+            cout << i+1 << " ";
+        }
+    }
+    
 };
 
 
@@ -91,6 +113,7 @@ int main() {
     SegmentTree ST(arr , n);
     
     cout << "Biggest Area : " << ST.getBiggestArea() << endl;
+    ST.getBuildings();
     
     return 0;
 }
